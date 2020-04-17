@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高恪闪讯L2TP多拨教程(全网首发) - 专属我的味道</title>
+    <meta name="author"  content="专属味道">
+    <meta name="description" content="高恪闪讯L2TP多拨教程(全网首发)">
+    <meta name="keywords"  content="闪讯多拨">
+    <!-- Open Graph -->
+    <meta property="og:title" content="高恪闪讯L2TP多拨教程(全网首发) - 专属我的味道">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://localhost:4000/2020/04/17/multi-l2tp.html">
+    <meta property="og:description" content="代码、软件、教程分享、小白必备的资源教程网">
+    <meta property="og:site_name" content="专属我的味道">
+    <link rel="stylesheet" href="//cdn.staticfile.org/normalize/6.0.0/normalize.min.css">
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_roc50gemkxpw4s4i.css">
+    <link rel="stylesheet" href="/assets/css/github-markdown.css">
+    <link rel="stylesheet" href="/assets/css/prism.css">
+    <link rel="stylesheet" href="/assets/css/share.min.css">
+    <link rel="stylesheet" href="/assets/css/app.min.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+	
+	<!--
+Author: Ray-Eldath
+refer to:
+ - http://docs.mathjax.org/en/latest/options/index.html
+-->
+
+	<script type="text/javascript" async src="https://cdn.bootcss.com/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+	
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+		jax: ["input/TeX", "output/HTML-CSS"],
+		tex2jax: {
+			inlineMath: [ ["$", "$"] ],
+			displayMath: [ ["$$", "$$"] ],
+			skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+		},
+		"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+      });
+    </script>
+
+	
+    <!--
+Author: Ray-Eldath
+-->
+<style>
+    .markdown-body .anchor{
+        float: left;
+        margin-top: -8px;
+        margin-left: -20px;
+        padding-right: 4px;
+        line-height: 1;
+        opacity: 0;
+    }
+    
+    .markdown-body .anchor .anchor-icon{
+        font-size: 15px
+    }
+</style>
+<script>
+    $(document).ready(function() {
+        let nodes = document.querySelector(".markdown-body").querySelectorAll("h1,h2,h3")
+        for(let node of nodes) {
+            var anchor = document.createElement("a")
+            var anchorIcon = document.createElement("i")
+            anchorIcon.setAttribute("class", "fa fa-anchor fa-lg anchor-icon")
+            anchorIcon.setAttribute("aria-hidden", true)
+            anchor.setAttribute("class", "anchor")
+            anchor.setAttribute("href", "#" + node.getAttribute("id"))
+            
+            anchor.onmouseover = function() {
+                this.style.opacity = "0.4"
+            }
+            
+            anchor.onmouseout = function() {
+                this.style.opacity = "0"
+            }
+            
+            anchor.appendChild(anchorIcon)
+            node.appendChild(anchor)
+        }
+    })
+</script>
+</head>
+
+
+<body>
+  <!--[if lt IE 10]>
+<div class="alert-danger" role="alert">你的浏览器实在太太太旧了，放学别走，升级完浏览器再说！<a target="_blank" class="alert-link" href="http://browsehappy.com">立即升级</a></div>
+<![endif]-->
+  <input id="nm-switch" type="hidden" value="true"> <header class="g-header">
+    <div class="g-logo">
+      <a href="/"></a>
+    </div>
+    <i id="menu-toggle" class="iconfont icon-menu"></i>
+    <nav class="g-nav">
+        <ul>
+            
+            <li><a href="/">主页</a></li>
+            
+            <li><a href="/tags.html">标签</a></li>
+            
+        </ul>
+    </nav>
+</header>
+
+
+  <header
+    class="g-banner post-header post-pattern-circuitBoard bgcolor-default "
+    data-theme="default"
+  >
+    <div class="post-wrapper">
+      <div class="post-tags">
+        
+          
+            <a href="/tags.html#%E9%97%AA%E8%AE%AF%E5%A4%9A%E6%8B%A8" class="post-tag">闪讯多拨</a>
+          
+        
+      </div>
+      <h1>高恪闪讯L2TP多拨教程(全网首发)</h1>
+      <div class="post-meta">
+        <span class="post-meta-item"><i class="iconfont icon-author"></i>专属味道</span>
+        <time class="post-meta-item" datetime="20-04-17"><i class="iconfont icon-date"></i>17 Apr 2020</time>
+      </div>
+    </div>
+    
+    <div class="filter"></div>
+      <div class="post-cover" style="background: url('http://on2171g4d.bkt.clouddn.com/jekyll-banner.png') center no-repeat; background-size: cover;"></div>
+    
+  </header>
+
+  <div class="post-content visible">
+    
+
+    <article class="markdown-body">
+      <p>我说的多拨就是多个账号拨号，以下是mt7621路由器的教程。附件(<strong>底部下载</strong>)里有sxplugin.so和高恪官方固件开ssh的配置备份。</p>
+
+<p>先刷公测版高恪(只有公测版高恪支持多l2tp)，再导入backup-ssh.config这个配置(附件有)，就可以使用ssh连接路由器。</p>
+
+<p>附上高恪公测版后台管理首页</p>
+
+<p><img src="/assets/uploads/2019/pic/3.jpg" alt="高恪后台首页" /></p>
+
+<p>ssh配置导入后，ssh端口是22222</p>
+
+<p>win10已经支持ssh命令了</p>
+
+<p>ssh 用户名@路由器ip -p 端口</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh root@192.168.1.1 -p 22222
+</code></pre></div></div>
+
+<p>密码就是后台密码，用户名可以是admin或root，但是admin权限不够。执行命令</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi /lib/netifd/proto/l2tp.sh
+</code></pre></div></div>
+
+<p>修改l2tp.sh,找到</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>echo “lcp-max-terminate 0“ &gt;&gt; “${optfile}“
+</code></pre></div></div>
+
+<p>这一行，换一行加上</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>echo “${pppd_options}“ &gt;&gt; “${optfile}“
+</code></pre></div></div>
+
+<p>这一行，如果跟我一样有强迫症，可以把下面的</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>echo “${ipv6:++ipv6} ${pppd_options}“ &gt;&gt; “${optfile}“
+</code></pre></div></div>
+
+<p>改成</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>echo “${ipv6:++ipv6}“ &gt;&gt; “${optfile}“
+</code></pre></div></div>
+
+<p>用vi的时候，上下切换光标，看到要修改的，按i，切换到编辑模式，可以修改。</p>
+
+<p>修改好之后，按esc退出编辑模式，输入:wq保存</p>
+
+<p>为什么要这么做？因为接下来要用到pppd_options，但是高恪固件用户也用不到，所以高恪官方，没考虑到这个问题。pppd_options改了也没用。所以要修改l2tp.sh。</p>
+
+<p>接下来就是下载hfs网络服务器，百度有，就不上传了。</p>
+
+<p>打开hfs文件服务器，将附件中的sxplugin.so拖到软件</p>
+
+<p>然后执行命令</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget http://本机ip(与路由器一个局域网)/sxplugin.so
+
+cp sxplugin.so /usr/lib/pppd/2.4.7
+
+cd /usr/lib/pppd/2.4.7
+
+chmod +x sxplugin.so
+</code></pre></div></div>
+
+<p>然后，去高恪后台，接下来配置弹性端口（多线多拨的方法），改成使用wan1，wan2其余做为lan口，这里注意了，有些路由器的高恪固件是反转的，若重启好，长时间不能访问后台，超过10分钟，自己换lan口看看。去外网配置好两个pppoe拨号，然后去虚拟专网，配置l2tp客户端。多线多拨的话，l2tp客户端那可以指定端口，比如我第一个l2tp客户端指定wan1，第二个指定wan2。这样设置好后，l2tp客户端还连接不了，顺便说一下，mtu和mru最好1350。然后执行命令修改network文件</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi /etc/config/network
+</code></pre></div></div>
+
+<p>找到那两个l2tp客户端的配置，在每个l2tp客户端后面加入</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>option pppd_options ‘plugin sxplugin.so‘
+</code></pre></div></div>
+
+<p>保存之后，去高恪的端口概览，重新连接端口，每次在客户端修改l2tp客户端的配置就要修改/etc/config/network。这样配置好之后，还是没网的。打开后台的多线策略，修改策略路由规则，添加一条规则，指定出口，勾选那几个l2tp客户端，就可以用了。</p>
+
+<p>单线多拨的话，，多线设置里面单线多拨，设置好pppoe账号，然后l2tp指定出口，一样的玩法。</p>
+<blockquote>
+<p><a href="https://www.lanzous.com/i4g7q3g">点击下载附件</a>
+</p></blockquote>
+
+    </article>
+
+    
+    <div class="social-share-wrapper">
+      <div class="social-share"></div>
+    </div>
+    
+  </div>
+
+  <section class="author-detail">
+    <section class="post-footer-item author-card">
+      <div class="avatar">
+        <img src="/assets/img/head.jpg" alt="">
+      </div>
+      <div class="author-name" rel="author">专属味道</div>
+      <div class="bio">
+        <p>一名小白</p>
+      </div>
+      
+      <ul class="sns-links">
+        
+        <li>
+          <a href="//weibo.com/6297412854" target="_blank">
+                    <i class="iconfont icon-weibo"></i>
+                </a>
+        </li>
+        
+        <li>
+          <a href="//github.com/myflavor" target="_blank">
+                    <i class="iconfont icon-github"></i>
+                </a>
+        </li>
+        
+      </ul>
+      
+    </section>
+    <section class="post-footer-item read-next">
+      
+      <div class="read-next-item">
+        <a href="/2020/04/17/notepad3-use.html" class="read-next-link"></a>
+        <section>
+          <span>使用Notepad3替代Notepad++</span>
+          <p>一起抵制Notepad++，使用Notepad3替代，抵制原因大家应该知道，不知道的可以百度”Notepad++作...</p>
+        </section>
+        
+        <div class="filter"></div>
+        <img src="http://on2171g4d.bkt.clouddn.com/jekyll-banner.png" alt="">
+        
+     </div>
+      
+
+      
+      <div class="read-next-item">
+        <a href="/2020/04/17/mac-x55ti.html" class="read-next-link"></a>
+          <section>
+            <span>炫龙X55TI装黑苹果详细教程(GIF演示)</span>
+            <p>先下载底部提供的TransMAC和macOS High Sierra 10.13.6 17G65 With Clo...</p>
+          </section>
+          
+          <div class="filter"></div>
+          <img src="http://on2171g4d.bkt.clouddn.com/jekyll-banner.png" alt="">
+          
+      </div>
+      
+    </section>
+    
+  </section>
+
+  <footer class="g-footer">
+  <section>专属我的味道 ©
+  
+  
+    2019
+    -
+  
+  2020
+  </section>
+  <section>Powered by <a href="//jekyllrb.com">Jekyll</a> | <a href="https://github.com/kaeyleo/jekyll-theme-H2O">Theme H2O</a></section>
+</footer>
+
+
+  <script src="/assets/js/social-share.min.js"></script>
+  <script>
+    socialShare('.social-share', {
+      sites: [
+        
+          'wechat'
+          ,
+          
+        
+          'weibo'
+          ,
+          
+        
+          'douban'
+          ,
+          
+        
+          'twitter'
+          
+        
+      ],
+      wechatQrcodeTitle: "分享到微信朋友圈",
+      wechatQrcodeHelper: '<p>扫码后点击右上角</p><p>将本文分享至朋友圈</p>'
+    });
+  </script>
+
+  
+
+  <script src="/assets/js/prism.js"></script>
+  <script src="/assets/js/index.min.js"></script>
+</body>
+
+</html>

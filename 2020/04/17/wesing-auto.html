@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全民K歌自动签到python代码 - 专属我的味道</title>
+    <meta name="author"  content="专属味道">
+    <meta name="description" content="全民K歌自动签到python代码">
+    <meta name="keywords"  content="云函数">
+    <!-- Open Graph -->
+    <meta property="og:title" content="全民K歌自动签到python代码 - 专属我的味道">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://localhost:4000/2020/04/17/wesing-auto.html">
+    <meta property="og:description" content="代码、软件、教程分享、小白必备的资源教程网">
+    <meta property="og:site_name" content="专属我的味道">
+    <link rel="stylesheet" href="//cdn.staticfile.org/normalize/6.0.0/normalize.min.css">
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_roc50gemkxpw4s4i.css">
+    <link rel="stylesheet" href="/assets/css/github-markdown.css">
+    <link rel="stylesheet" href="/assets/css/prism.css">
+    <link rel="stylesheet" href="/assets/css/share.min.css">
+    <link rel="stylesheet" href="/assets/css/app.min.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+	
+	<!--
+Author: Ray-Eldath
+refer to:
+ - http://docs.mathjax.org/en/latest/options/index.html
+-->
+
+	<script type="text/javascript" async src="https://cdn.bootcss.com/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+	
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+		jax: ["input/TeX", "output/HTML-CSS"],
+		tex2jax: {
+			inlineMath: [ ["$", "$"] ],
+			displayMath: [ ["$$", "$$"] ],
+			skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+		},
+		"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+      });
+    </script>
+
+	
+    <!--
+Author: Ray-Eldath
+-->
+<style>
+    .markdown-body .anchor{
+        float: left;
+        margin-top: -8px;
+        margin-left: -20px;
+        padding-right: 4px;
+        line-height: 1;
+        opacity: 0;
+    }
+    
+    .markdown-body .anchor .anchor-icon{
+        font-size: 15px
+    }
+</style>
+<script>
+    $(document).ready(function() {
+        let nodes = document.querySelector(".markdown-body").querySelectorAll("h1,h2,h3")
+        for(let node of nodes) {
+            var anchor = document.createElement("a")
+            var anchorIcon = document.createElement("i")
+            anchorIcon.setAttribute("class", "fa fa-anchor fa-lg anchor-icon")
+            anchorIcon.setAttribute("aria-hidden", true)
+            anchor.setAttribute("class", "anchor")
+            anchor.setAttribute("href", "#" + node.getAttribute("id"))
+            
+            anchor.onmouseover = function() {
+                this.style.opacity = "0.4"
+            }
+            
+            anchor.onmouseout = function() {
+                this.style.opacity = "0"
+            }
+            
+            anchor.appendChild(anchorIcon)
+            node.appendChild(anchor)
+        }
+    })
+</script>
+</head>
+
+
+<body>
+  <!--[if lt IE 10]>
+<div class="alert-danger" role="alert">你的浏览器实在太太太旧了，放学别走，升级完浏览器再说！<a target="_blank" class="alert-link" href="http://browsehappy.com">立即升级</a></div>
+<![endif]-->
+  <input id="nm-switch" type="hidden" value="true"> <header class="g-header">
+    <div class="g-logo">
+      <a href="/"></a>
+    </div>
+    <i id="menu-toggle" class="iconfont icon-menu"></i>
+    <nav class="g-nav">
+        <ul>
+            
+            <li><a href="/">主页</a></li>
+            
+            <li><a href="/tags.html">标签</a></li>
+            
+        </ul>
+    </nav>
+</header>
+
+
+  <header
+    class="g-banner post-header post-pattern-circuitBoard bgcolor-default "
+    data-theme="default"
+  >
+    <div class="post-wrapper">
+      <div class="post-tags">
+        
+          
+            <a href="/tags.html#%E4%BA%91%E5%87%BD%E6%95%B0" class="post-tag">云函数</a>
+          
+        
+      </div>
+      <h1>全民K歌自动签到python代码</h1>
+      <div class="post-meta">
+        <span class="post-meta-item"><i class="iconfont icon-author"></i>专属味道</span>
+        <time class="post-meta-item" datetime="20-04-17"><i class="iconfont icon-date"></i>17 Apr 2020</time>
+      </div>
+    </div>
+    
+    <div class="filter"></div>
+      <div class="post-cover" style="background: url('http://on2171g4d.bkt.clouddn.com/jekyll-banner.png') center no-repeat; background-size: cover;"></div>
+    
+  </header>
+
+  <div class="post-content visible">
+    
+
+    <article class="markdown-body">
+      <p><img src="/assets/uploads/2020/04/2438544304.png" alt="QQ图片20200414131054.png" /></p>
+
+<p>代码如下</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>import requests
+import json
+
+openkey = ''  # 必填，不知道openkey哪里来的，抓包的时候某一个url上会有openkey，复制过来就好了
+cookie = ''  # Cookie
+key = ''  # server酱key，不填不通知
+
+headers = {
+    'Cookie': cookie,
+    'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 QQJSSDK/1.0.0 Hippy/1.0 qua/V1_IPH_KG_6.21.8_449_APP_A qmkege/6.21.8 GDTMobSDK/4.10.36',
+    'Content-Type': 'application/json',
+    'Referer': 'https://kg.qq.com/vMission/index.html?hippy=vMission',
+    'Host': 'node.kg.qq.com',
+    'No-Chunked': 'true'
+}
+
+
+def get_uid_from_cookie():
+    kvs = cookie.split("; ")
+    uid = ''
+    for i in kvs:
+        if i.find('uid=') &gt;= 0:
+            uid = i.split('=')[1]
+    return uid
+
+
+def _sign_in_():
+    uid = get_uid_from_cookie()
+    params = '{\"g_tk_openkey\":' + openkey + ',\"t_uid\":\"' + uid + '\",\"t_show_entry\":0,\"t_mapExtInfo\":{\"device_id\":\"\"},\"t_vctAppId\":[],\"ns\":\"KG_TASK\",\"cmd\":\"task.revisionSignInGetAward\",\"ns_inbuf\":\"\",\"mapExt\":{\"file\":\"taskJce\",\"cmdName\":\"GetSignInAwardReq\",\"l5api\":{\"modid\":503937,\"cmd\":589824},\"l5api_exp1\":{\"modid\":817089,\"cmd\":3801088}}}'
+    sign_url = 'https://node.kg.qq.com/webapp/proxy?format=json&amp;outCharset=utf-8&amp;g_tk=' + openkey + '&amp;g_tk_openkey=' + openkey
+    msg = '';
+    try:
+        resp = requests.post(sign_url, data=params, headers=headers)
+        # print(resp.text)
+        awards_jo = json.loads(resp.text)['data']['task.revisionSignInGetAward']
+        # awards_jo = json.loads(
+        #   '{"total":1,"awards":[{"Id":22,"num":3,"desc":"","option":0,"confValue":"","mapExtInfo":{}},{"Id":22,"num":3,"desc":"","option":0,"confValue":"","mapExtInfo":{}}],"ret":0,"msg":"","lotteryStatus":0}')
+        if awards_jo['total'] &gt; 0:
+            num = 0
+            for award in awards_jo['awards']:
+                num += award['num']
+            msg = "获得鲜花" + str(num) + "个"
+        else:
+            msg = awards_jo['msg']
+    except Exception:
+        msg = 'cookie失效'
+    return msg
+
+
+def send_message(content):
+    content = requests.get('https://sc.ftqq.com/' + key + '.send?text=全民K歌签到结果&amp;desp=' + content).text
+
+
+if __name__ == '__main__':
+    msg = _sign_in_()
+    print('msg: ', msg)
+    if len(key) &gt; 0:
+        send_message(msg)
+</code></pre></div></div>
+
+<p>搬运出处 https://yaohuo.me/bbs-808910.html</p>
+
+
+    </article>
+
+    
+    <div class="social-share-wrapper">
+      <div class="social-share"></div>
+    </div>
+    
+  </div>
+
+  <section class="author-detail">
+    <section class="post-footer-item author-card">
+      <div class="avatar">
+        <img src="/assets/img/head.jpg" alt="">
+      </div>
+      <div class="author-name" rel="author">专属味道</div>
+      <div class="bio">
+        <p>一名小白</p>
+      </div>
+      
+      <ul class="sns-links">
+        
+        <li>
+          <a href="//weibo.com/6297412854" target="_blank">
+                    <i class="iconfont icon-weibo"></i>
+                </a>
+        </li>
+        
+        <li>
+          <a href="//github.com/myflavor" target="_blank">
+                    <i class="iconfont icon-github"></i>
+                </a>
+        </li>
+        
+      </ul>
+      
+    </section>
+    <section class="post-footer-item read-next">
+      
+      <div class="read-next-item">
+        <a href="/2020/04/17/zjy-auto.html" class="read-next-link"></a>
+        <section>
+          <span>云课堂-智慧职教(职教云)自动签到云函数代码</span>
+          <p>bilibili视频教程</p>
+        </section>
+        
+        <div class="filter"></div>
+        <img src="http://on2171g4d.bkt.clouddn.com/jekyll-banner.png" alt="">
+        
+     </div>
+      
+
+      
+      <div class="read-next-item">
+        <a href="/2020/04/17/notepad3-use.html" class="read-next-link"></a>
+          <section>
+            <span>使用Notepad3替代Notepad++</span>
+            <p>一起抵制Notepad++，使用Notepad3替代，抵制原因大家应该知道，不知道的可以百度”Notepad++作...</p>
+          </section>
+          
+          <div class="filter"></div>
+          <img src="http://on2171g4d.bkt.clouddn.com/jekyll-banner.png" alt="">
+          
+      </div>
+      
+    </section>
+    
+  </section>
+
+  <footer class="g-footer">
+  <section>专属我的味道 ©
+  
+  
+    2019
+    -
+  
+  2020
+  </section>
+  <section>Powered by <a href="//jekyllrb.com">Jekyll</a> | <a href="https://github.com/kaeyleo/jekyll-theme-H2O">Theme H2O</a></section>
+</footer>
+
+
+  <script src="/assets/js/social-share.min.js"></script>
+  <script>
+    socialShare('.social-share', {
+      sites: [
+        
+          'wechat'
+          ,
+          
+        
+          'weibo'
+          ,
+          
+        
+          'douban'
+          ,
+          
+        
+          'twitter'
+          
+        
+      ],
+      wechatQrcodeTitle: "分享到微信朋友圈",
+      wechatQrcodeHelper: '<p>扫码后点击右上角</p><p>将本文分享至朋友圈</p>'
+    });
+  </script>
+
+  
+
+  <script src="/assets/js/prism.js"></script>
+  <script src="/assets/js/index.min.js"></script>
+</body>
+
+</html>

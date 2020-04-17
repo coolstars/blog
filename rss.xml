@@ -1,0 +1,538 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>专属我的味道</title>
+    <description>代码、软件、教程分享、小白必备的资源教程网</description>
+    <link>http://localhost:4000//</link>
+    <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
+    <pubDate>Fri, 17 Apr 2020 16:11:34 +0800</pubDate>
+    <lastBuildDate>Fri, 17 Apr 2020 16:11:34 +0800</lastBuildDate>
+    <generator>Jekyll v4.0.0</generator>
+    
+      <item>
+        <title>云课堂-智慧职教(职教云)自动签到云函数代码</title>
+        <description>&lt;p&gt;&lt;a href=&quot;https://b23.tv/BV16e411x7TH&quot;&gt;bilibili视频教程&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;使用&lt;a href=&quot;https://cloud.tencent.com/product/scf/&quot;&gt;腾讯云函数&lt;/a&gt;，设置语言&lt;strong&gt;python3.6&lt;/strong&gt;，模板&lt;strong&gt;空白函数&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;将index.py改成&lt;strong&gt;zjy.py&lt;/strong&gt;，执行方法改成&lt;strong&gt;zjy.auto_signin&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;将下面代码的内容&lt;strong&gt;复制到云函数的zjy.py&lt;/strong&gt;，修改网页中zjy.py的&lt;strong&gt;用户名&lt;/strong&gt;，&lt;strong&gt;密码&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;设置内存&lt;strong&gt;64MB&lt;/strong&gt;，超时&lt;strong&gt;1s&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;设置环境变量&lt;strong&gt;TZ=Asia/Shanghai&lt;/strong&gt;即可&lt;/p&gt;
+
+&lt;p&gt;添加触发方式，使用&lt;strong&gt;自定义触发&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;注意: 是定时自动签到，运行次数过多将产生费用&lt;a href=&quot;https://cloud.tencent.com/product/scf/pricing&quot;&gt;参考云函数定价&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;提示: 定时签到的话，可以添加多个云函数不产生费用，实时签到只够一个账号&lt;/p&gt;
+
+&lt;p&gt;以下是触发参考，更多自定义触发&lt;a href=&quot;https://cloud.tencent.com/document/product/876/32314&quot;&gt;参考cron文档&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;定时签到参考&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;9点50左右有一次签到(星期二到星期五的上午9点45-54的每五秒钟执行一次&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;*/5 45-54 9 * * TUE-FRI * 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;13点40左右有一次签到(星期一和星期三的下午1点35-44的每五秒钟执行一次)&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;*/5 35-44 13 * * MON,WED * 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;实时签到参考&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;上午7点到19点不定时会有签到(星期一到星期五的上午7点到19点的每五秒执行一次)&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;*/5 * 7-19 * * MON-FRI * 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/uploads/2020/03/2522170555.png&quot; alt=&quot;QQ截图20200324154657.png&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;代码如下,删除最后几行的#号注释并修改[SCKEY]为自己的即可接入&lt;a href=&quot;http://sc.ftqq.com/&quot;&gt;Server酱&lt;/a&gt;微信推送签到结果&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# -*- coding: utf8 -*-
+import requests,json,time
+def auto_signin(event, context):
+    url_api=&quot;https://zjyapp.icve.com.cn/newmobileapi/&quot;
+    headers = {
+            &quot;Content-Type&quot;: &quot;application/x-www-form-urlencoded&quot;,&quot;Host&quot;: &quot;zjyapp.icve.com.cn&quot;,&quot;Connection&quot;: &quot;Keep-Alive&quot;,&quot;Accept-Encoding&quot;: &quot;gzip&quot;,&quot;User-Agent&quot;: &quot;okhttp/3.10.0&quot;
+        }
+    userName,userPwd=&quot;用户名&quot;,&quot;密码&quot;
+    loginData = {&quot;clientId&quot;: &quot;432701808fe1403e80903fb32730e4d4&quot;, &quot;sourceType&quot;: &quot;2&quot;, &quot;userPwd&quot;: userPwd, &quot;userName&quot;: userName,&quot;appVersion&quot;: &quot;2.8.19&quot;}
+    session = requests.Session()
+    login=session.post(url_api + &quot;mobilelogin/newlogin&quot;, data=loginData,headers=headers)
+    loginInfo=json.loads(login.text)
+    if loginInfo[&quot;code&quot;]!=1:
+        return (loginInfo[&quot;msg&quot;])
+    stuId = loginInfo[&quot;userId&quot;]
+    faceDate = (time.strftime(&quot;%Y-%m-%d&quot;, time.localtime()))
+    todayClassData = {&quot;stuId&quot;: stuId, &quot;faceDate&quot;: faceDate}
+    todayClass=session.post(url_api + &quot;faceteach/getStuFaceTeachList&quot;, data=todayClassData, headers=headers)
+    todayClassInfo=json.loads(todayClass.text)[&quot;dataList&quot;]
+    result=&quot;&quot;
+    for i in range(len(todayClassInfo)):
+        inClassData = {
+            &quot;activityId&quot;: todayClassInfo[i][&quot;Id&quot;], &quot;stuId&quot;: stuId, &quot;classState&quot;: todayClassInfo[i][&quot;state&quot;], &quot;openClassId&quot;: todayClassInfo[i][&quot;openClassId&quot;]
+        }
+        inClass=session.post(url_api + &quot;faceteach/newGetStuFaceActivityList&quot;, data=inClassData, headers=headers)
+        inClassInfo=json.loads(inClass.text)[&quot;dataList&quot;]
+        if len(inClassInfo) != 0:
+            for n in range(len(inClassInfo)):
+                if inClassInfo[n][&quot;DataType&quot;] == &quot;签到&quot; and inClassInfo[n][&quot;State&quot;] != 3:
+                    attendData = {
+                        &quot;activityId&quot;: todayClassInfo[i][&quot;Id&quot;], &quot;openClassId&quot;: todayClassInfo[i][&quot;openClassId&quot;], &quot;stuId&quot;: stuId, &quot;typeId&quot;: inClassInfo[n][&quot;Id&quot;], &quot;type&quot;: &quot;1&quot;
+                    }
+                    attend=session.post(url_api + &quot;faceteach/isJoinActivities&quot;, data=attendData,headers=headers)
+                    attendInfo=json.loads(attend.text)
+                    if attendInfo[&quot;isAttend&quot;] != 1:
+                        signInData = {
+                        &quot;signId&quot;: inClassInfo[n][&quot;Id&quot;], &quot;stuId&quot;: stuId, &quot;openClassId&quot;: todayClassInfo[i][&quot;openClassId&quot;],&quot;sourceType&quot;: &quot;2&quot;, &quot;checkInCode&quot;: &quot;&quot;,&quot;activityId&quot;:&quot;&quot;
+                        }
+                        signIn=session.post(url_api + &quot;faceteach/saveStuSign&quot;, data=signInData,headers=headers)
+                        signInInfo=json.loads(signIn.text)
+                        signInTime=time.strftime(&quot;%Y-%m-%d %H:%M:%S&quot;, time.localtime())
+                        result=result+(todayClassInfo[i][&quot;courseName&quot;] + &quot; &quot; + signInTime + &quot; &quot; + signInInfo[&quot;msg&quot;])+&quot;\r\n&quot;
+    if result == &quot;&quot;:
+        result = &quot;当前不存在未签到&quot;
+    #else:
+        #resultData={&quot;text&quot;: &quot;职教云签到结果&quot;, &quot;desp&quot;: result}
+        #requests.post(&quot;https://sc.ftqq.com/[SCKEY].send&quot;,data=resultData)
+    return result
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;有问题可以评论留言或发送邮件到admin@myflv.cn&lt;/p&gt;
+
+</description>
+        <pubDate>Fri, 17 Apr 2020 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000/2020/04/17/zjy-auto.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2020/04/17/zjy-auto.html</guid>
+        
+        <category>云函数</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>全民K歌自动签到python代码</title>
+        <description>&lt;p&gt;&lt;img src=&quot;/assets/uploads/2020/04/2438544304.png&quot; alt=&quot;QQ图片20200414131054.png&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;代码如下&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;import requests
+import json
+
+openkey = ''  # 必填，不知道openkey哪里来的，抓包的时候某一个url上会有openkey，复制过来就好了
+cookie = ''  # Cookie
+key = ''  # server酱key，不填不通知
+
+headers = {
+    'Cookie': cookie,
+    'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 QQJSSDK/1.0.0 Hippy/1.0 qua/V1_IPH_KG_6.21.8_449_APP_A qmkege/6.21.8 GDTMobSDK/4.10.36',
+    'Content-Type': 'application/json',
+    'Referer': 'https://kg.qq.com/vMission/index.html?hippy=vMission',
+    'Host': 'node.kg.qq.com',
+    'No-Chunked': 'true'
+}
+
+
+def get_uid_from_cookie():
+    kvs = cookie.split(&quot;; &quot;)
+    uid = ''
+    for i in kvs:
+        if i.find('uid=') &amp;gt;= 0:
+            uid = i.split('=')[1]
+    return uid
+
+
+def _sign_in_():
+    uid = get_uid_from_cookie()
+    params = '{\&quot;g_tk_openkey\&quot;:' + openkey + ',\&quot;t_uid\&quot;:\&quot;' + uid + '\&quot;,\&quot;t_show_entry\&quot;:0,\&quot;t_mapExtInfo\&quot;:{\&quot;device_id\&quot;:\&quot;\&quot;},\&quot;t_vctAppId\&quot;:[],\&quot;ns\&quot;:\&quot;KG_TASK\&quot;,\&quot;cmd\&quot;:\&quot;task.revisionSignInGetAward\&quot;,\&quot;ns_inbuf\&quot;:\&quot;\&quot;,\&quot;mapExt\&quot;:{\&quot;file\&quot;:\&quot;taskJce\&quot;,\&quot;cmdName\&quot;:\&quot;GetSignInAwardReq\&quot;,\&quot;l5api\&quot;:{\&quot;modid\&quot;:503937,\&quot;cmd\&quot;:589824},\&quot;l5api_exp1\&quot;:{\&quot;modid\&quot;:817089,\&quot;cmd\&quot;:3801088}}}'
+    sign_url = 'https://node.kg.qq.com/webapp/proxy?format=json&amp;amp;outCharset=utf-8&amp;amp;g_tk=' + openkey + '&amp;amp;g_tk_openkey=' + openkey
+    msg = '';
+    try:
+        resp = requests.post(sign_url, data=params, headers=headers)
+        # print(resp.text)
+        awards_jo = json.loads(resp.text)['data']['task.revisionSignInGetAward']
+        # awards_jo = json.loads(
+        #   '{&quot;total&quot;:1,&quot;awards&quot;:[{&quot;Id&quot;:22,&quot;num&quot;:3,&quot;desc&quot;:&quot;&quot;,&quot;option&quot;:0,&quot;confValue&quot;:&quot;&quot;,&quot;mapExtInfo&quot;:{}},{&quot;Id&quot;:22,&quot;num&quot;:3,&quot;desc&quot;:&quot;&quot;,&quot;option&quot;:0,&quot;confValue&quot;:&quot;&quot;,&quot;mapExtInfo&quot;:{}}],&quot;ret&quot;:0,&quot;msg&quot;:&quot;&quot;,&quot;lotteryStatus&quot;:0}')
+        if awards_jo['total'] &amp;gt; 0:
+            num = 0
+            for award in awards_jo['awards']:
+                num += award['num']
+            msg = &quot;获得鲜花&quot; + str(num) + &quot;个&quot;
+        else:
+            msg = awards_jo['msg']
+    except Exception:
+        msg = 'cookie失效'
+    return msg
+
+
+def send_message(content):
+    content = requests.get('https://sc.ftqq.com/' + key + '.send?text=全民K歌签到结果&amp;amp;desp=' + content).text
+
+
+if __name__ == '__main__':
+    msg = _sign_in_()
+    print('msg: ', msg)
+    if len(key) &amp;gt; 0:
+        send_message(msg)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;搬运出处 https://yaohuo.me/bbs-808910.html&lt;/p&gt;
+
+</description>
+        <pubDate>Fri, 17 Apr 2020 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000/2020/04/17/wesing-auto.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2020/04/17/wesing-auto.html</guid>
+        
+        <category>云函数</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>使用Notepad3替代Notepad++</title>
+        <description>&lt;p&gt;一起抵制Notepad++，使用Notepad3替代，抵制原因大家应该知道，不知道的可以百度”Notepad++作者”，Notepad3和Notepad++相似度很高，都是轻量的文本编辑器，Notepad对我来说，语法高亮是最重要的，界面不花里胡哨，看代码舒服，至于写Java和C或者HTML啥的，还是用VS code或者eclipse，idea这些编辑器。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/uploads/2019/pic/97_1.png&quot; alt=&quot;软件界面&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Notepad3官网下载地址：https://www.rizonesoft.com/downloads/notepad3/&lt;/p&gt;
+
+&lt;p&gt;下载官网的PORTABLE(便携版)，解压到某个位置之后。&lt;/p&gt;
+
+&lt;p&gt;打开注册表编辑器（Windows键+R，输入regedit，回车），如下图所示：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/uploads/2019/pic/97_2.png&quot; alt=&quot;Win+R运行&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;在注册表编辑器中，HKEY_CLASSES_ROOT –&amp;gt; * –&amp;gt; shell 目录点击右键。新建 –&amp;gt; 项，这里命名的 项 值就是鼠标右键列表里面显示的内容，这里起名为【Edit With Notepad3】。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/uploads/2019/pic/97_3.png&quot; alt=&quot;新建项&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;在右侧空白区域点击右键 【新建 –&amp;gt; 字符串值】，分别创建如下图所示的两个字符串，名称为【Icon】值为Notepad3的路径地址，名称为【MultiSelectModel】值为 Single，这一步设置的意义是设置鼠标右键列表中的图标，这里的MultiSelectMode设为Single，意味着只有选中单个文件的时候才会有右键。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/uploads/2019/pic/97_4.png&quot; alt=&quot;添加命令&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;在这里起名为【Edit With Notepad3】的目录下新建名为【Command】的项，编辑右侧默认项的值为Notepad3的路径，如下图所示，需要用引号并且后面追加 “%1”。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/uploads/2020/03/3985235737.png&quot; alt=&quot;QQ截图20200313211637.png&quot; /&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Fri, 17 Apr 2020 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000/2020/04/17/notepad3-use.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2020/04/17/notepad3-use.html</guid>
+        
+        <category>教程,软件</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>高恪闪讯L2TP多拨教程(全网首发)</title>
+        <description>&lt;p&gt;我说的多拨就是多个账号拨号，以下是mt7621路由器的教程。附件(&lt;strong&gt;底部下载&lt;/strong&gt;)里有sxplugin.so和高恪官方固件开ssh的配置备份。&lt;/p&gt;
+
+&lt;p&gt;先刷公测版高恪(只有公测版高恪支持多l2tp)，再导入backup-ssh.config这个配置(附件有)，就可以使用ssh连接路由器。&lt;/p&gt;
+
+&lt;p&gt;附上高恪公测版后台管理首页&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/uploads/2019/pic/3.jpg&quot; alt=&quot;高恪后台首页&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;ssh配置导入后，ssh端口是22222&lt;/p&gt;
+
+&lt;p&gt;win10已经支持ssh命令了&lt;/p&gt;
+
+&lt;p&gt;ssh 用户名@路由器ip -p 端口&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ssh root@192.168.1.1 -p 22222
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;密码就是后台密码，用户名可以是admin或root，但是admin权限不够。执行命令&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;vi /lib/netifd/proto/l2tp.sh
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;修改l2tp.sh,找到&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;echo “lcp-max-terminate 0“ &amp;gt;&amp;gt; “${optfile}“
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;这一行，换一行加上&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;echo “${pppd_options}“ &amp;gt;&amp;gt; “${optfile}“
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;这一行，如果跟我一样有强迫症，可以把下面的&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;echo “${ipv6:++ipv6} ${pppd_options}“ &amp;gt;&amp;gt; “${optfile}“
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;改成&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;echo “${ipv6:++ipv6}“ &amp;gt;&amp;gt; “${optfile}“
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;用vi的时候，上下切换光标，看到要修改的，按i，切换到编辑模式，可以修改。&lt;/p&gt;
+
+&lt;p&gt;修改好之后，按esc退出编辑模式，输入:wq保存&lt;/p&gt;
+
+&lt;p&gt;为什么要这么做？因为接下来要用到pppd_options，但是高恪固件用户也用不到，所以高恪官方，没考虑到这个问题。pppd_options改了也没用。所以要修改l2tp.sh。&lt;/p&gt;
+
+&lt;p&gt;接下来就是下载hfs网络服务器，百度有，就不上传了。&lt;/p&gt;
+
+&lt;p&gt;打开hfs文件服务器，将附件中的sxplugin.so拖到软件&lt;/p&gt;
+
+&lt;p&gt;然后执行命令&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;wget http://本机ip(与路由器一个局域网)/sxplugin.so
+
+cp sxplugin.so /usr/lib/pppd/2.4.7
+
+cd /usr/lib/pppd/2.4.7
+
+chmod +x sxplugin.so
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;然后，去高恪后台，接下来配置弹性端口（多线多拨的方法），改成使用wan1，wan2其余做为lan口，这里注意了，有些路由器的高恪固件是反转的，若重启好，长时间不能访问后台，超过10分钟，自己换lan口看看。去外网配置好两个pppoe拨号，然后去虚拟专网，配置l2tp客户端。多线多拨的话，l2tp客户端那可以指定端口，比如我第一个l2tp客户端指定wan1，第二个指定wan2。这样设置好后，l2tp客户端还连接不了，顺便说一下，mtu和mru最好1350。然后执行命令修改network文件&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;vi /etc/config/network
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;找到那两个l2tp客户端的配置，在每个l2tp客户端后面加入&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;option pppd_options ‘plugin sxplugin.so‘
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;保存之后，去高恪的端口概览，重新连接端口，每次在客户端修改l2tp客户端的配置就要修改/etc/config/network。这样配置好之后，还是没网的。打开后台的多线策略，修改策略路由规则，添加一条规则，指定出口，勾选那几个l2tp客户端，就可以用了。&lt;/p&gt;
+
+&lt;p&gt;单线多拨的话，，多线设置里面单线多拨，设置好pppoe账号，然后l2tp指定出口，一样的玩法。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.lanzous.com/i4g7q3g&quot;&gt;点击下载附件&lt;/a&gt;
+&lt;/p&gt;&lt;/blockquote&gt;
+</description>
+        <pubDate>Fri, 17 Apr 2020 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000/2020/04/17/multi-l2tp.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2020/04/17/multi-l2tp.html</guid>
+        
+        <category>闪讯多拨</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>炫龙X55TI装黑苹果详细教程(GIF演示)</title>
+        <description>&lt;p&gt;先下载底部提供的TransMAC和macOS High Sierra 10.13.6 17G65 With Clover 4596.dmg&lt;/p&gt;
+
+&lt;p&gt;然后如Gif一样操作，选择U盘，先Format Disk For MAC，再Restore With Disk Image&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/uploads/2019/pic/24_1.gif&quot; alt=&quot;TransMac&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;接下来就是对硬盘进行分区，给黑苹果分一个系统分区，我是在机械硬盘上操作的。&lt;/p&gt;
+
+&lt;p&gt;利用win10自带的磁盘管理，右键开始菜单，磁盘管理，利用压缩卷，在不影响原数据的情况下对硬盘分区&lt;/p&gt;
+
+&lt;p&gt;如下GIF一样操作，选择一个可以缩小的分区，压缩大小推荐60G以上，即60*1024，新建卷的时候不要分配卷标，也不要格式化。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/uploads/2019/pic/24_2.gif&quot; alt=&quot;磁盘分区&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;然后重启，修改BIOS启动顺序为U盘，开机会显示Clover，选择带有install的&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/uploads/2019/pic/24_3.jpg&quot; alt=&quot;Clover&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;如果出现和以下图片一样的代码，不要慌，等就行了&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/uploads/2019/pic/24_4.png&quot; alt=&quot;五国&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;安装界面如下，选择磁盘工具&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/uploads/2019/pic/24_5.png&quot; alt=&quot;安装界面&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;找到自己要安装的分区，抹除（这里因为我装在机械上，所以选择了扩展式）&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/uploads/2019/pic/24_6.png&quot; alt=&quot;磁盘分区&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;抹盘成功后，关闭磁盘管理&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/uploads/2019/pic/24_7.png&quot; alt=&quot;抹盘成功&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;安装MacOS&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/uploads/2019/pic/24_8.png&quot; alt=&quot;安装MacOS&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;一路下一步&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/uploads/2019/pic/24_9.png&quot; alt=&quot;下一步&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;到安装盘这里，选择自己刚刚抹除的分区，点击安装&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/uploads/2019/pic/24_10.png&quot; alt=&quot;选择磁盘&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;然后我们只需要静静等待第一段安装的完成&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://www.myflv.cn/usr/uploads/2019/pic/24_11.png&quot; alt=&quot;静待完成&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;接着又是一波代码(五国)&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://www.myflv.cn/usr/uploads/2019/pic/24_12.png&quot; alt=&quot;五国&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;看到正在安装的界面，顺利完成安装&lt;/p&gt;
+
+&lt;p&gt;接下来就是给机械盘添加EFI分区，让黑苹果从机械盘引导&lt;/p&gt;
+
+&lt;p&gt;用DG分区工具，建立300M的ESP分区(FAT32即可)，把U盘上的EFI盘里面的全部文件拷到新建的ESP分区，开机用机械硬盘引导就能黑苹果，用固态引导就能进win10，gif有空再加&lt;/p&gt;
+
+&lt;p&gt;提供的文件下载链接: https://pan.baidu.com/s/1vtKdnYnrhQSKbq3vILin8w 提取码: ctdn&lt;/p&gt;
+
+</description>
+        <pubDate>Fri, 17 Apr 2020 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000/2020/04/17/mac-x55ti.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2020/04/17/mac-x55ti.html</guid>
+        
+        <category>教程</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>努比亚Z17官方安卓P太极阳magisk卡刷包</title>
+        <description>&lt;p&gt;努比亚Z17的官方P有点特殊，需要刷入太极Magisk的4.8.1版本，这个版本是安卓Q专用的。经过几星期的连续使用，未发现异常。&lt;/p&gt;
+
+&lt;p&gt;若刷入后，卡第一屏，请在rec的高级，绯色工具箱，进行内核签名。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;下载地址在文章底部&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/uploads/2019/pic/7.jpg&quot; alt=&quot;magisk模块截图&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;center&gt;
+&lt;blockquote&gt;
+&lt;p&gt;网盘密码：zswd&lt;p&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.lanzous.com/i4h5cud&quot; target=&quot;	
+_blank&quot;&gt;点击下载附件&lt;/a&gt;
+&lt;p&gt;
+
+&lt;/p&gt;&lt;/p&gt;&lt;/p&gt;&lt;/p&gt;&lt;/blockquote&gt;&lt;/center&gt;&lt;/p&gt;
+</description>
+        <pubDate>Fri, 17 Apr 2020 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000/2020/04/17/z17-taichi.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2020/04/17/z17-taichi.html</guid>
+        
+        <category>安卓</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>Windows10数字权利激活脚本</title>
+        <description>&lt;blockquote&gt;
+  &lt;p&gt;支持WindowsWindows 10 家庭版、家庭N、家庭单语言版、家庭国家版、Windows 10 S、Windows 10 SN。专业版、专业N、专业教育版、专业教育N、专业工作站版、工作站N。企业版、企业 （LTSB 2016）、教育版、教育N。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/uploads/2019/pic/18.png&quot; alt=&quot;脚本截图&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;center&gt;
+&lt;blockquote&gt;
+&lt;p&gt;网盘密码：zswd&lt;p&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.lanzous.com/i4n85vg&quot; target=&quot;	
+_blank&quot;&gt;点击下载附件&lt;/a&gt;
+&lt;p&gt;
+
+&lt;/p&gt;&lt;/p&gt;&lt;/p&gt;&lt;/p&gt;&lt;/blockquote&gt;&lt;/center&gt;&lt;/p&gt;
+</description>
+        <pubDate>Fri, 17 Apr 2020 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000/2020/04/17/win10-key.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2020/04/17/win10-key.html</guid>
+        
+        <category>软件</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>Win10 HEVC免费下载</title>
+        <description>&lt;p&gt;&lt;img src=&quot;/assets/uploads/2020/03/3572276951.png&quot; alt=&quot;QQ截图20200313171906.png&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;下载地址:&lt;a href=&quot;https://www.microsoft.com/store/productId/9N4WGH0Z6VHQ&quot;&gt;https://www.microsoft.com/store/productId/9N4WGH0Z6VHQ&lt;/a&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Fri, 17 Apr 2020 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000/2020/04/17/win10-hevc.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2020/04/17/win10-hevc.html</guid>
+        
+        <category>软件</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>Windows Defender优化</title>
+        <description>&lt;p&gt;1.使用快捷键（WIN+R）调出运行工具，&lt;/p&gt;
+
+&lt;p&gt;2.输入组策略命令(gpedit.msc)，点击确定。&lt;/p&gt;
+
+&lt;p&gt;3.进入组策略，依次点击展开，计算机配置-管理模板-Windows组件-Windows Defender。&lt;/p&gt;
+
+&lt;p&gt;4.双击右边的Windows Defender防病毒程序，然后点击扫描&lt;/p&gt;
+
+&lt;p&gt;5.在扫描的设置里，双击指定每周的不同天运行计划扫描，单击已启动，在左边指定每周的不同天运行计划扫描，设置为默认情况下的“从不” 。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/uploads/2020/03/3207121650.png&quot; alt=&quot;wdconfig.png&quot; /&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Fri, 17 Apr 2020 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000/2020/04/17/win10-defender.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2020/04/17/win10-defender.html</guid>
+        
+        <category>教程</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>Windowsd代理服务端Mproxy</title>
+        <description>&lt;p&gt;cygwin使用gcc交叉编译得到&lt;/p&gt;
+
+&lt;p&gt;源码来自&lt;a href=&quot;https://github.com/coolstars/mproxy-mod&quot;&gt;https://github.com/coolstars/mproxy-mod&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;3种使用方法&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;双击运行，使用8080端口运行&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;cmd定位到mproxy所在目录，执行以下命令(参数参考github)&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;mproxy -l 8080&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/uploads/2019/pic/86.png&quot; alt=&quot;运行截图&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;3.在mproxy写个bat，内容为方法2所提到的命令。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;注意防火墙&lt;/strong&gt;如果需要隐藏cmd窗口自行百度，使用VBscript即可实现&lt;/p&gt;
+
+&lt;p&gt;&lt;center&gt;
+&lt;blockquote&gt;
+&lt;p&gt;网盘密码：zswd&lt;p&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.lanzous.com/i6vj1mj &quot; target=&quot;	
+_blank&quot;&gt;点击下载附件&lt;/a&gt;
+&lt;p&gt;
+
+
+
+&lt;/p&gt;&lt;/p&gt;&lt;/p&gt;&lt;/p&gt;&lt;/blockquote&gt;&lt;/center&gt;&lt;/p&gt;
+</description>
+        <pubDate>Fri, 17 Apr 2020 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000/2020/04/17/win-proxy.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2020/04/17/win-proxy.html</guid>
+        
+        <category>软件</category>
+        
+        
+      </item>
+    
+  </channel>
+</rss>

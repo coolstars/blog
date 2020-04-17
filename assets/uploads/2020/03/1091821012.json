@@ -1,0 +1,20 @@
+﻿{
+    "ver":"5.0",
+    "tag":"hipsuser",
+    "data":[
+        {
+            "id":4,
+            "power":1,
+            "name":"沙盒添加文件夹右键",
+            "procname":"*",
+            "treatment":3,
+            "policies":[
+                {
+                    "montype":2,
+                    "action_type":1,
+                    "res_path":"HKEY_CLASSES_ROOT\\Folder\\shell\\sandbox"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>使用沙盒Sandboxie来避免流氓程序以及多开 - 专属我的味道</title>
+    <meta name="author"  content="专属味道">
+    <meta name="description" content="使用沙盒Sandboxie来避免流氓程序以及多开">
+    <meta name="keywords"  content="软件">
+    <!-- Open Graph -->
+    <meta property="og:title" content="使用沙盒Sandboxie来避免流氓程序以及多开 - 专属我的味道">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://localhost:4000/2020/04/17/sandbox-use.html">
+    <meta property="og:description" content="代码、软件、教程分享、小白必备的资源教程网">
+    <meta property="og:site_name" content="专属我的味道">
+    <link rel="stylesheet" href="//cdn.staticfile.org/normalize/6.0.0/normalize.min.css">
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_roc50gemkxpw4s4i.css">
+    <link rel="stylesheet" href="/assets/css/github-markdown.css">
+    <link rel="stylesheet" href="/assets/css/prism.css">
+    <link rel="stylesheet" href="/assets/css/share.min.css">
+    <link rel="stylesheet" href="/assets/css/app.min.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+	
+	<!--
+Author: Ray-Eldath
+refer to:
+ - http://docs.mathjax.org/en/latest/options/index.html
+-->
+
+	<script type="text/javascript" async src="https://cdn.bootcss.com/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+	
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+		jax: ["input/TeX", "output/HTML-CSS"],
+		tex2jax: {
+			inlineMath: [ ["$", "$"] ],
+			displayMath: [ ["$$", "$$"] ],
+			skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+		},
+		"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+      });
+    </script>
+
+	
+    <!--
+Author: Ray-Eldath
+-->
+<style>
+    .markdown-body .anchor{
+        float: left;
+        margin-top: -8px;
+        margin-left: -20px;
+        padding-right: 4px;
+        line-height: 1;
+        opacity: 0;
+    }
+    
+    .markdown-body .anchor .anchor-icon{
+        font-size: 15px
+    }
+</style>
+<script>
+    $(document).ready(function() {
+        let nodes = document.querySelector(".markdown-body").querySelectorAll("h1,h2,h3")
+        for(let node of nodes) {
+            var anchor = document.createElement("a")
+            var anchorIcon = document.createElement("i")
+            anchorIcon.setAttribute("class", "fa fa-anchor fa-lg anchor-icon")
+            anchorIcon.setAttribute("aria-hidden", true)
+            anchor.setAttribute("class", "anchor")
+            anchor.setAttribute("href", "#" + node.getAttribute("id"))
+            
+            anchor.onmouseover = function() {
+                this.style.opacity = "0.4"
+            }
+            
+            anchor.onmouseout = function() {
+                this.style.opacity = "0"
+            }
+            
+            anchor.appendChild(anchorIcon)
+            node.appendChild(anchor)
+        }
+    })
+</script>
+</head>
+
+
+<body>
+  <!--[if lt IE 10]>
+<div class="alert-danger" role="alert">你的浏览器实在太太太旧了，放学别走，升级完浏览器再说！<a target="_blank" class="alert-link" href="http://browsehappy.com">立即升级</a></div>
+<![endif]-->
+  <input id="nm-switch" type="hidden" value="true"> <header class="g-header">
+    <div class="g-logo">
+      <a href="/"></a>
+    </div>
+    <i id="menu-toggle" class="iconfont icon-menu"></i>
+    <nav class="g-nav">
+        <ul>
+            
+            <li><a href="/">主页</a></li>
+            
+            <li><a href="/tags.html">标签</a></li>
+            
+        </ul>
+    </nav>
+</header>
+
+
+  <header
+    class="g-banner post-header post-pattern-circuitBoard bgcolor-default "
+    data-theme="default"
+  >
+    <div class="post-wrapper">
+      <div class="post-tags">
+        
+          
+            <a href="/tags.html#%E8%BD%AF%E4%BB%B6" class="post-tag">软件</a>
+          
+        
+      </div>
+      <h1>使用沙盒Sandboxie来避免流氓程序以及多开</h1>
+      <div class="post-meta">
+        <span class="post-meta-item"><i class="iconfont icon-author"></i>专属味道</span>
+        <time class="post-meta-item" datetime="20-04-17"><i class="iconfont icon-date"></i>17 Apr 2020</time>
+      </div>
+    </div>
+    
+    <div class="filter"></div>
+      <div class="post-cover" style="background: url('http://on2171g4d.bkt.clouddn.com/jekyll-banner.png') center no-repeat; background-size: cover;"></div>
+    
+  </header>
+
+  <div class="post-content visible">
+    
+
+    <article class="markdown-body">
+      <p><strong>Sandboxie 是最受欢迎和最强大的安全软件之一，用于在可疑和不可靠的环境中保护网络浏览器或运行软件。Sandboxie 首先创造一个类似沙盒的独立作业环境，在其内部运行的程序并不能对硬盘产生永久性的影响。其为一个独立的虚拟环境，可用以测试不受信任的应用程序或上网行为。</strong></p>
+
+<p><img src="/assets/uploads/2019/pic/77_1.png" alt="软件截图" /></p>
+
+<p>在安装完沙盒后，先打开软件，点击状态栏-配置-系统配置，建议设置如下</p>
+
+<p><img src="/assets/uploads/2019/pic/77_2.png" alt="系统配置" /></p>
+
+<p>Sandboxie会在文件夹和文件的右键都增加一个在沙盘运行的右键，个人觉得文件夹的右键没有必要，还会导致回收站的右键也有在沙盘运行，故下面给出删除文件夹右键在沙盘中运行的方法。</p>
+
+<p>按Win+R键，输入regedit运行注册表编辑器，点击任务栏的编辑-查找，输入在沙盘中运行，然后查找，会</p>
+
+<p>找到文件右键的在沙盘中运行，继续点击任务栏的编辑-查找下一个。就会搜到下面这个路径的注册表</p>
+
+<p><img src="/assets/uploads/2019/pic/77_3.png" alt="文件夹右键" /></p>
+
+<p>右键sandbox然后删除即可，需要注意的是，每次更改系统配置，都会重新增加这个注册表需要再次删除。</p>
+
+<p>建议修改沙盘的保存文件夹，点击沙盘任务栏的沙盘-设置保存文件夹，修改至非C盘的目录。</p>
+
+<p><img src="/assets/uploads/2019/pic/77_4.png" alt="保存文件夹" /></p>
+
+<p>将你觉得比较流氓的程序，右键在沙盘中运行，需要安装的程序，可以直接右键需要运行的程序在沙盘中运行安装，<strong>安装后，桌面上是找不到的。</strong></p>
+
+<p><strong>1.在设置的保存文件夹\沙盘名下打开exe程序是会对应沙盘执行该exe程序</strong></p>
+
+<p><strong>2.在设置的保存文件夹\沙盘名\drive下，每个字母的文件夹对应每个磁盘</strong></p>
+
+<p>根据第1条性质和第2条性质，可以直接在drive中找到主程序的exe，右键发送到桌面，就可以有快捷方式了，再修改下快捷方式的文件名即可。</p>
+
+<p><strong>多开只需要创建多个沙盘，在不同沙盘中运行即可</strong></p>
+
+<p><center>
+<blockquote>
+<p>网盘密码：zswd<p>
+<p><a href="https://www.lanzous.com/i65mwsd" target="	
+_blank">点击下载附件</a>
+<p>
+
+</p></p></p></p></blockquote></center></p>
+
+    </article>
+
+    
+    <div class="social-share-wrapper">
+      <div class="social-share"></div>
+    </div>
+    
+  </div>
+
+  <section class="author-detail">
+    <section class="post-footer-item author-card">
+      <div class="avatar">
+        <img src="/assets/img/head.jpg" alt="">
+      </div>
+      <div class="author-name" rel="author">专属味道</div>
+      <div class="bio">
+        <p>一名小白</p>
+      </div>
+      
+      <ul class="sns-links">
+        
+        <li>
+          <a href="//weibo.com/6297412854" target="_blank">
+                    <i class="iconfont icon-weibo"></i>
+                </a>
+        </li>
+        
+        <li>
+          <a href="//github.com/myflavor" target="_blank">
+                    <i class="iconfont icon-github"></i>
+                </a>
+        </li>
+        
+      </ul>
+      
+    </section>
+    <section class="post-footer-item read-next">
+      
+      <div class="read-next-item">
+        <a href="/2020/04/17/shenqi-browser.html" class="read-next-link"></a>
+        <section>
+          <span>神奇浏览器0.9.8.4免开通会员版</span>
+          <p>神奇浏览器是一款使用系统WebView的浏览器，其特点在于简洁与无广告。</p>
+        </section>
+        
+        <div class="filter"></div>
+        <img src="http://on2171g4d.bkt.clouddn.com/jekyll-banner.png" alt="">
+        
+     </div>
+      
+
+      
+      <div class="read-next-item">
+        <a href="/2020/04/17/qqmusic-dts.html" class="read-next-link"></a>
+          <section>
+            <span>QQ音乐_9.5.0.6_DTS免费版</span>
+            <p>  由于修改了APP，破坏了APP原有签名，故导致QQ无法快速登陆，需要手动登录，如果觉得不靠谱，就别下载。</p>
+          </section>
+          
+          <div class="filter"></div>
+          <img src="http://on2171g4d.bkt.clouddn.com/jekyll-banner.png" alt="">
+          
+      </div>
+      
+    </section>
+    
+  </section>
+
+  <footer class="g-footer">
+  <section>专属我的味道 ©
+  
+  
+    2019
+    -
+  
+  2020
+  </section>
+  <section>Powered by <a href="//jekyllrb.com">Jekyll</a> | <a href="https://github.com/kaeyleo/jekyll-theme-H2O">Theme H2O</a></section>
+</footer>
+
+
+  <script src="/assets/js/social-share.min.js"></script>
+  <script>
+    socialShare('.social-share', {
+      sites: [
+        
+          'wechat'
+          ,
+          
+        
+          'weibo'
+          ,
+          
+        
+          'douban'
+          ,
+          
+        
+          'twitter'
+          
+        
+      ],
+      wechatQrcodeTitle: "分享到微信朋友圈",
+      wechatQrcodeHelper: '<p>扫码后点击右上角</p><p>将本文分享至朋友圈</p>'
+    });
+  </script>
+
+  
+
+  <script src="/assets/js/prism.js"></script>
+  <script src="/assets/js/index.min.js"></script>
+</body>
+
+</html>
